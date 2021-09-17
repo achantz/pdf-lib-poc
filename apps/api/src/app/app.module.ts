@@ -1,11 +1,17 @@
 import { Module } from '@nestjs/common';
+import { MulterModule } from '@nestjs/platform-express';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { FilesController } from './controllers/files.controller';
+import { FileService } from './services/file.service';
+import { PdfService } from './services/pdf.service';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    MulterModule.register({
+      dest: './files/store',
+    }),
+  ],
+  controllers: [FilesController],
+  providers: [FileService, PdfService],
 })
 export class AppModule {}
