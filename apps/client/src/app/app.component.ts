@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Message } from '@pdf-lib-poc/api-interfaces';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'pdf-lib-poc-root',
@@ -8,6 +7,5 @@ import { Message } from '@pdf-lib-poc/api-interfaces';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  hello$ = this.http.get<Message>('/api/hello');
   constructor(private http: HttpClient) {}
 }
