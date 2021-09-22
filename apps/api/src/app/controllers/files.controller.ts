@@ -1,13 +1,16 @@
 import { Controller, Post, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import * as fs from 'fs';
 import { memoryStorage } from 'multer';
 import path = require('path');
 
+import { PdfFormInterceptor } from '../interceptors/pdf-form.interceptor';
 import { FileService } from './../services/file.service';
 import { PdfService } from './../services/pdf.service';
 
 @Controller('files')
+@ApiTags('files')
 export class FilesController {
   memStorage = memoryStorage();
 
@@ -32,7 +35,19 @@ export class FilesController {
   }
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file'), PdfFormInterceptor)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   async uploadFile(@UploadedFile() file) {
     const response = {
       originalName: file.originalname,
@@ -41,11 +56,25 @@ export class FilesController {
       buffer: file.bufer,
     };
 
-    const isFillablePDF = await this.pdfService.isFillabePDFFromMetadata(
-      path.join('files/store/', file.filename)
-    );
+    // write file to filesystem
+    //this.fileService.writeFileToDB(file);
 
-    console.log(`PDF Form: ${isFillablePDF}`);
+    //const filePath = path.join('files/store/', file.filename);
+    //this.pdfService.flattenPDF(filePath);
+
+    //let isAcroForm = false;
+    //let isXFA = false;
+
+    // if (fs.existsSync(filePath)) {
+    //   isAcroForm = await this.pdfService.isAcroForm(filePath);
+    //   isXFA = await this.pdfService.isAXFA(filePath);
+    // }
+
+    // const isFillablePDF = await this.pdfService.isAcroForm(
+    //   path.join('files/store/', file.filename)
+    // );
+
+    // console.log(`PDF Form: ${isFillablePDF}`);
 
     //this.fileService.writeFileToDB(file);
 
@@ -54,6 +83,21 @@ export class FilesController {
 
   @Post('multiple')
   @UseInterceptors(FilesInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        files: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
+      },
+    },
+  })
   uploadMultipleFiles(@UploadedFiles() files) {
     const response = [];
     files.forEach((file) => {
