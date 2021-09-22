@@ -84,7 +84,8 @@
             "inlineStyleLanguage": "scss",
             "assets": ["apps/client/src/favicon.ico", "apps/client/src/assets"],
             "styles": ["apps/client/src/styles.scss"],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": ["pdfjs-dist"]
           },
           "configurations": {
             "production": {
