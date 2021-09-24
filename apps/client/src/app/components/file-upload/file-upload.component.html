@@ -1,7 +1,62 @@
-<div class="m-1">
-  <input
-    type="file"
-    class="file-upload form-control"
-    (change)="upload($event)"
-  />
+<form class="form" id="form">
+  <div class="d-flex flex-row">
+    <input
+      type="file"
+      class="file-upload form-control"
+      (change)="checkFile($event)"
+      #fileUpload
+    />
+    <button
+      class="btn btn-primary ms-2"
+      [disabled]="!canSubmit"
+      (click)="submit()"
+    >
+      Submit
+    </button>
+    <button class="btn btn-danger ms-2" onclick="reset()">Reset</button>
+  </div>
+</form>
+
+<div class="mt-2" *ngIf="this.metadata">
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      [checked]="isAcroFormPDF"
+      id="flexCheckDefault"
+      disabled
+    />
+    <label class="form-check-label" for="flexCheckDefault">
+      PDF has AcroForm present and can be flattened
+    </label>
+  </div>
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      [checked]="isXFAPDF"
+      id="flexCheckDefault"
+      disabled
+    />
+    <label class="form-check-label" for="flexCheckDefault">
+      PDF has XFA Form and cannot be processed
+    </label>
+  </div>
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      [checked]="!isXFAPDF && !isAcroFormPDF"
+      id="flexCheckDefault"
+      disabled
+    />
+    <label class="form-check-label" for="flexCheckDefault">
+      PDF has no form
+    </label>
+  </div>
+  <h2>PDF Metadata</h2>
+  <pre
+    >{{ this.metadata | json }}
+</pre
+  >
 </div>

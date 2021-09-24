@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { StoredFile } from '../models/stored-file';
-import { StoredFiles } from '../models/stored-files';
+import { StoredFile } from '../../models/stored-file';
+import { StoredFiles } from '../../models/stored-files';
 
 @Injectable()
-export class FileService {
+export class FilesService {
   private rootDir = './files';
   private storeFile = path.join(this.rootDir, 'store.json');
 

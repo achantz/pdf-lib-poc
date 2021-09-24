@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
-import { MulterModule } from '@nestjs/platform-express';
+import { MongooseModule } from '@nestjs/mongoose';
 
-import { FilesController } from './controllers/files.controller';
-import { FileService } from './services/file.service';
-import { PdfService } from './services/pdf.service';
+import { FileUploadModule } from './controllers/file-upload/file-upload.module';
+import { FileModule } from './controllers/file/file.module';
 
 @Module({
   imports: [
-    MulterModule.register({
-      dest: './files/store',
-    }),
+    MongooseModule.forRoot('mongodb://localhost/upload'),
+    FileUploadModule,
+    FileModule,
   ],
-  controllers: [FilesController],
-  providers: [FileService, PdfService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

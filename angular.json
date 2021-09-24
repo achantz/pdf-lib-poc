@@ -83,8 +83,11 @@
             "tsConfig": "apps/client/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": ["apps/client/src/favicon.ico", "apps/client/src/assets"],
-            "styles": ["apps/client/src/styles.scss"],
-            "scripts": [],
+            "styles": [
+              "apps/client/src/styles.scss",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css"
+            ],
+            "scripts": ["node_modules/bootstrap/dist/js/bootstrap.min.js"],
             "allowedCommonJsDependencies": ["pdfjs-dist"]
           },
           "configurations": {

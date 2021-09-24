@@ -2,29 +2,24 @@ import { Controller, Post, UploadedFile, UploadedFiles, UseInterceptors } from '
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import * as fs from 'fs';
-import { memoryStorage } from 'multer';
 import path = require('path');
 
-import { PdfFormInterceptor } from '../interceptors/pdf-form.interceptor';
-import { FileService } from './../services/file.service';
-import { PdfService } from './../services/pdf.service';
+import { PdfFormInterceptor } from '../../interceptors/pdf-form.interceptor';
+import { PdfService } from '../file-upload/pdf.service';
 
 @Controller('files')
 @ApiTags('files')
 export class FilesController {
-  memStorage = memoryStorage();
+  //memStorage = memoryStorage();
 
-  constructor(
-    private fileService: FileService,
-    private pdfService: PdfService
-  ) {}
+  constructor(private pdfService: PdfService) {}
 
   @Post('cleanup')
   async deleteAllFiles() {
     const rootDir = './files/store';
     const files = fs.readdirSync(rootDir);
     const deletedFiles = [];
-    await this.fileService.removeFilesFromDB(files);
+    //await this.fileService.removeFilesFromDB(files);
     files.forEach((file) => {
       const filePath = path.join(rootDir, file);
       fs.unlinkSync(filePath);
@@ -108,7 +103,7 @@ export class FilesController {
       };
       response.push(fileResponse);
 
-      this.fileService.writeFileToDB(file);
+      //this.fileService.writeFileToDB(file);
     });
     return response;
   }

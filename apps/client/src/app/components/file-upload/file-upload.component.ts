@@ -1,39 +1,65 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { getDocument } from 'pdfjs-dist';
-import * as pdfjsLib from 'pdfjs-dist';
 
+import { FileService } from './../../services/file.service';
+import { PdfMetadataService } from './../../services/pdf-metadata.service';
+
+//import { getDocument } from 'pdfjs-dist';
 @Component({
   selector: 'pdf-lib-poc-file-upload',
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.scss'],
 })
 export class FileUploadComponent {
-  files: File[] = [];
+  metadata?: any;
+  isAcroFormPDF = false;
+  isXFAPDF = false;
+  file: File | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private pdfMeta: PdfMetadataService,
+    private fileService: FileService
+  ) {}
 
-  async upload($event: any) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      '//cdn.jsdelivr.net/npm/pdfjs-dist@2.9.359/build/pdf.worker.js';
+  async checkFile($event: any) {
     const file = $event.target.files[0];
-    console.log(file);
-    let buffer;
-    const reader = new FileReader();
-    reader.onload = async (e: any) => {
-      buffer = e.target.result;
-      const bytes = new Uint8Array(buffer);
-      await getDocument(bytes).promise.then((doc) => {
-        doc.getMetadata().then((meta) => {
-          console.log(meta);
-        });
-      });
-    };
+    if (file) {
+      this.file = file;
+      if (file.type === 'application/pdf') {
+        await this.pdfMeta
+          .readMetadata(file)
+          .then((m: any) => {
+            this.metadata = m;
+            this.isAcroFormPDF = m.info.IsAcroFormPresent;
+            this.isXFAPDF = m.info.IsXFAPresent;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        this.metadata = null;
+        this.isAcroFormPDF = false;
+        this.isXFAPDF = false;
+      }
 
-    reader.readAsArrayBuffer(file);
+      if (this.isXFAPDF) {
+        alert('This PDF contains a XFA Form and cannot be uploaded.');
+      }
+    }
   }
 
-  // private extractPdfMetadata(file: File) {
+  submit() {
+    if (this.file) {
+      this.fileService.uploadFile(this.file);
+      this.metadata = null;
+      this.isAcroFormPDF = false;
+      this.isXFAPDF = false;
+      (document.getElementById('form') as HTMLFormElement).reset();
+    }
+  }
 
-  // }
+  get canSubmit(): boolean {
+    return this.file !== null && !this.isXFAPDF;
+  }
 }
