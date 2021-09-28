@@ -17,7 +17,7 @@
   </div>
 </form>
 
-<div class="mt-2" *ngIf="this.metadata">
+<div class="mt-2" *ngIf="this.metadata; else nometa">
   <div class="form-check">
     <input
       class="form-check-input"
@@ -55,8 +55,10 @@
     </label>
   </div>
   <h2>PDF Metadata</h2>
-  <pre
-    >{{ this.metadata | json }}
-</pre
-  >
+  <pre>{{ this.metadata | json }}</pre>
 </div>
+<ng-template #nometa>
+  <div class="mt-2 mb-2 text-danger" *ngIf="this.file">
+    <i>No PDF Metadata Found</i>
+  </div>
+</ng-template>

@@ -31,10 +31,6 @@ export class FileService {
     return fileUpload;
   }
 
-  // update(id: number, updateUploadDto: UpdateUploadDto) {
-  //   return `This action updates a #${id} upload`;
-  // }
-
   async remove(id: string) {
     const deletedFile = await this.uploadModel.findByIdAndDelete(id).exec();
     fs.unlinkSync(join('./files/', deletedFile._id));

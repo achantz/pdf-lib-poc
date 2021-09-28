@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 
@@ -11,7 +12,7 @@ import { PdfMetadataService } from './../../services/pdf-metadata.service';
   styleUrls: ['./file-upload.component.scss'],
 })
 export class FileUploadComponent {
-  metadata?: any;
+  metadata?: any = null;
   isAcroFormPDF = false;
   isXFAPDF = false;
   file: File | null = null;
