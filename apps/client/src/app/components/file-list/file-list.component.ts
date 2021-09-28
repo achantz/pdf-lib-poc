@@ -1,6 +1,4 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FileUpload } from '@pdf-lib-poc/api-interfaces';
 
 import { FileService } from './../../services/file.service';
 
@@ -10,7 +8,7 @@ import { FileService } from './../../services/file.service';
   styleUrls: ['./file-list.component.scss'],
 })
 export class FileListComponent {
-  constructor(public fileService: FileService, private http: HttpClient) {}
+  constructor(public fileService: FileService) {}
 
   deleteFile(id: string) {
     if (id) {

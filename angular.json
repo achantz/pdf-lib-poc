@@ -87,7 +87,10 @@
               "apps/client/src/styles.scss",
               "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
-            "scripts": ["node_modules/bootstrap/dist/js/bootstrap.min.js"],
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "node_modules/pdfjs-dist/build/pdf.worker.min.js"
+            ],
             "allowedCommonJsDependencies": ["pdfjs-dist"]
           },
           "configurations": {

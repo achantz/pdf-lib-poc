@@ -14,8 +14,9 @@ export class PdfMetadataService {
     if (file) {
       if (file.type === this.pdfMimeType) {
         return new Promise((res) => {
-          GlobalWorkerOptions.workerSrc =
-            '//cdn.jsdelivr.net/npm/pdfjs-dist@2.9.359/build/pdf.worker.js';
+          
+          GlobalWorkerOptions.workerSrc = 'pdf.worker.js';
+          //'//cdn.jsdelivr.net/npm/pdfjs-dist@2.9.359/build/pdf.worker.js';
           const reader = new FileReader();
           reader.onload = async (e: any) => {
             const buffer = e.target.result;

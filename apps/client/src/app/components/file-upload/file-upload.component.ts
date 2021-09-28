@@ -44,9 +44,9 @@ export class FileUploadComponent {
         this.isXFAPDF = false;
       }
 
-      if (this.isXFAPDF) {
-        alert('This PDF contains a XFA Form and cannot be uploaded.');
-      }
+      // if (this.isXFAPDF) {
+      //   alert('This PDF contains a XFA Form and cannot be uploaded.');
+      // }
     }
   }
 
@@ -61,6 +61,7 @@ export class FileUploadComponent {
   }
 
   get canSubmit(): boolean {
-    return this.file !== null && !this.isXFAPDF;
+    //return this.file !== null && !this.isXFAPDF;
+    return this.file !== null;
   }
 }
