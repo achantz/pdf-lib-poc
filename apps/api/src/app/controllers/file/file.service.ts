@@ -1,19 +1,43 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import * as fs from 'fs';
+import { Model } from 'mongoose';
+import { join } from 'path';
 
-import { FileUploadService } from './../file-upload/file-upload.service';
+import { CreateFileDto } from './dto/create-file.dto';
+import { File } from './file.schema';
 
+//import { UpdateUploadDto } from './dto/update-upload.dto';
 @Injectable()
 export class FileService {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor(private fileUploadService: FileUploadService) {}
+  constructor(@InjectModel(File.name) private uploadModel: Model<File>) {}
 
-  async getFileAsBinary(id: string) {
-    const fileUpload = await this.fileUploadService.findOne(id);
+  create(createUploadDto: CreateFileDto): Promise<File> {
+    const createdUpload = new this.uploadModel(createUploadDto);
+    return createdUpload.save();
+  }
+
+  findAll(): Promise<File[]> {
+    return this.uploadModel.find().exec();
+  }
+
+  async findOne(id: string): Promise<File> {
+    const fileUpload = await this.uploadModel.findById(id).exec();
 
     if (!fileUpload) {
       throw new NotFoundException();
     }
 
-    // get binary data to send
+    return fileUpload;
+  }
+
+  // update(id: number, updateUploadDto: UpdateUploadDto) {
+  //   return `This action updates a #${id} upload`;
+  // }
+
+  async remove(id: string) {
+    const deletedFile = await this.uploadModel.findByIdAndDelete(id).exec();
+    fs.unlinkSync(join('./files/', deletedFile._id));
+    return deletedFile;
   }
 }

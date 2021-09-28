@@ -1,28 +1,92 @@
-import { Controller, Get, NotFoundException, Param, Res, UploadedFile } from '@nestjs/common';
-import { resolveSoa } from 'dns';
-import * as fs from 'fs';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  BadRequestException,
+  Bind,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express/multer';
+import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { Express } from 'express';
+import { Multer } from 'multer';
 import { join } from 'path';
 
-import { FileUploadService } from './../file-upload/file-upload.service';
+import { PDFInterceptor } from '../../interceptors/pdf.intrerceptor';
+import { CreateFileDto } from './dto/create-file.dto';
+import { FileService } from './file.service';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-@Controller('file')
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+export const multerOptions = {
+  dest: './files',
+} as MulterOptions;
+
+// export const storage = {
+//   memoryStorage
+// }
+
+@Controller('file-upload')
+@ApiTags('file-upload')
 export class FileController {
   rootDir = './files';
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor(private fileUploadService: FileUploadService) {}
+  constructor(private readonly fileService: FileService) {}
+
+  @Post()
+  @UseInterceptors(FileInterceptor('file', multerOptions), PDFInterceptor)
+  @Bind(UploadedFile())
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  async single(@UploadedFile() file: Express.Multer.File) {
+    const fileUpload = {
+      _id: file.filename,
+      fileName: file.originalname,
+      mimeType: file.mimetype,
+    } as CreateFileDto;
+
+    this.fileService.create(fileUpload);
+
+    return fileUpload;
+  }
+
+  @Get()
+  findAll() {
+    return this.fileService.findAll();
+  }
 
   @Get(':id')
-  async getFile(@Param('id') id: string, @Res() res): Promise<any> {
-    //async getFile(@Param('id') id: string) {
-    const fileUpload = await this.fileUploadService.findOne(id);
+  async findOne(@Param('id') id: string, @Res() res) {
+    const fileData = await this.fileService.findOne(id);
 
-    if (!fileUpload) {
-      throw new NotFoundException();
-    }
-    const filePath = join(process.cwd(), this.rootDir, fileUpload._id);
-    res.set('Content-Type', fileUpload.mimeType);
-    res.download(filePath, fileUpload.fileName);
+    const filePath = join(process.cwd(), this.rootDir, id);
+    res.set('Content-Type', fileData.mimeType);
+    res.download(filePath, fileData.fileName);
+  }
+
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateUploadDto: UpdateUploadDto) {
+  //   return this.uploadService.update(+id, updateUploadDto);
+  // }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.fileService.remove(id);
   }
 }

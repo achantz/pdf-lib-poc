@@ -1,12 +1,16 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 
-import { FileUploadModule } from './../file-upload/file-upload.module';
 import { FileController } from './file.controller';
+import { File, FileSchema } from './file.schema';
 import { FileService } from './file.service';
 
 @Module({
-  imports: [FileUploadModule],
+  imports: [
+    MongooseModule.forFeature([{ name: File.name, schema: FileSchema }]),
+  ],
+  exports: [FileService],
   controllers: [FileController],
-  providers: [FileService, FileUploadModule],
+  providers: [FileService],
 })
 export class FileModule {}

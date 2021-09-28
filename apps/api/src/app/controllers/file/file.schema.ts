@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema()
-export class FileUpload extends Document {
+export class File extends Document {
   @Prop({ required: true })
   _id: string;
 
@@ -12,4 +12,4 @@ export class FileUpload extends Document {
   @Prop({ required: true })
   mimeType: string;
 }
-export const FileUploadSchema = SchemaFactory.createForClass(FileUpload);
+export const FileSchema = SchemaFactory.createForClass(File);

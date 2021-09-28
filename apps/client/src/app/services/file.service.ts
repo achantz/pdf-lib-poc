@@ -1,5 +1,4 @@
 import { HttpClient } from '@angular/common/http';
-import { LEADING_TRIVIA_CHARS } from '@angular/compiler/src/render3/view/template';
 import { Injectable } from '@angular/core';
 import { FileUpload } from '@pdf-lib-poc/api-interfaces';
 import { BehaviorSubject, Observable } from 'rxjs';
